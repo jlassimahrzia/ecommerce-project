@@ -238,7 +238,7 @@
                                             </div>
                                             <div class="col-lg-12 input-group">
                                                 <div class="custom-file">
-                                                <input type="file" class="custom-file-input" id="image" name="image" required accept="image/png,image/jpg,image/jpeg">
+                                                <input type="file"  class="custom-file-input" id="image" name="image" required accept="image/png,image/jpg,image/jpeg">
                                                 <label class="custom-file-label" for="inputGroupFile04">Upload image</label>                                           
                                                 </div>                                           
                                             </div>
