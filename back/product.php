@@ -70,14 +70,24 @@ class product {
         }
     }
 
-    public function update($id,$nom,$desc,$idc){
+    public function update($id,$nom,$desc,$idc,$image = NULL){
         try
         {
-            $sql ="UPDATE produit SET nom=:nom , description=:description , id_categ=:id_categ 
-            WHERE id=:id ";
-            $req = $this->db->prepare($sql);
-            $req->execute(array(":id"=>$id , ":nom"=>$nom , ":description"=>$desc , ":id_categ"=>$idc));
-            return true ;
+            if (isset($image)){
+                 $sql ="UPDATE produit SET nom=:nom , description=:description , id_categ=:id_categ, url_image=:image
+                WHERE id=:id ";
+                $req = $this->db->prepare($sql);
+                $req->execute(array(":id"=>$id , ":nom"=>$nom , ":description"=>$desc , ":id_categ"=>$idc, ":image" => $image));
+                return true ;
+            }
+            else {
+                $sql ="UPDATE produit SET nom=:nom , description=:description , id_categ=:id_categ
+                WHERE id=:id ";
+                $req = $this->db->prepare($sql);
+                $req->execute(array(":id"=>$id , ":nom"=>$nom , ":description"=>$desc , ":id_categ"=>$idc));
+                return true ;
+            }
+           
         }          
         catch(PDOException $e)
         {

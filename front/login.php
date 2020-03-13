@@ -126,11 +126,11 @@
                                     }
                                 ?>
                             </div>
-                            <div class="group-input gi-check">
+                            <!-- <div class="group-input gi-check">
                                 <div class="gi-more">
                                     <a href="#" class="forget-pass">Forget your Password</a>
                                 </div>
-                            </div>
+                            </div> -->
                             <input type="submit" class="site-btn login-btn" name="login" value="Sign In">
                         </form>
                     </div>

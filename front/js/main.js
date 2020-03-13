@@ -9,6 +9,7 @@
 
 'use strict';
 
+
 (function ($) {
 
     /*------------------
@@ -245,6 +246,9 @@
 			}
 		}
 		$button.parent().find('input').val(newVal);
-	});
+    });
+    
 
 })(jQuery);
+
+

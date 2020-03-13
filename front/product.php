@@ -3,11 +3,11 @@
 
 <head>
     <meta charset="UTF-8">
-    <meta name="description" content="Fashi Template">
+    <meta name="description" content="Products">
     <meta name="keywords" content="Fashi, unica, creative, html">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Fashi | Template</title>
+    <title>Products</title>
 
     <!-- Google Font -->
     <link href="https://fonts.googleapis.com/css?family=Muli:300,400,500,600,700,800,900&display=swap" rel="stylesheet">
@@ -76,7 +76,6 @@
                 }
             }
             
-
         }
         if(isset($_POST['add_categ'])) {
             $valide=true ;
@@ -89,14 +88,56 @@
                 $cat->add($name);
             }
         }
+        
+
+
+         if(isset($_POST['update'])) {
+
+            $valide=true ;
+            $id = $_POST['id']; //product id
+            $name=$_POST['name'] ;
+            if(!empty($_POST['categorie'])){
+                $categ=$_POST['categorie'];
+            }         
+            $description=$_POST['description'];
+            $image=basename($_FILES["image"]["name"]);
+            
+            if(empty($name)){
+                $erName="Write name of product"  ;
+                $valide=false ;
+            }
+            if(!isset($categ)){
+                $erCateg="Select categorie of product"  ;
+                $valide=false ;
+            }
+            if(empty($description)){
+                $erDescription="Write description of product"  ;
+                $valide=false ;
+            }
+            
+            if($valide){     
+                $image=$product->upload_img();         
+                if($image!=null){   
+                    // update with image               
+                   $product->update($id, $name,$description,$categ,$image);      
+                }
+                else {
+                    // update without image
+                    $product->update($id, $name,$description,$categ);
+            
+                }
+                
+            }
+            
+        }
     ?>
 </head>
 
 <body>
     <!-- Page Preloder -->
-    <!-- <div id="preloder">
+    <div id="preloder">
         <div class="loader"></div>
-    </div> -->
+    </div>
 
     <!-- Header Section Begin -->
     <header class="header-section">
@@ -113,12 +154,13 @@
                 <div class="ht-right">
                     <a href="logout.php" class="login-panel"><i class="ti-lock"></i>LogOut</a>
                     <div class="lan-selector">
-                        <select class="language_drop" name="countries" id="countries" style="width:300px;">
+                        <select class="language_drop" name="countries" id="countries" style="width:400px;" onchange="selectCategory(value);">
+                            <option><a href="./product.php">All Categories</a></option>
                             <?php
                                 $cat = new categorie($db_config)  ;
                                 $req = $cat->get_all_cat();
                                 while ($ligne = $req->fetch()) {
-                                    echo '<option><a href="#">'.$ligne['nom'].'</a></option>';
+                                    echo '<option value="'.$ligne['id'].'" ><a href="#">'.$ligne['nom'].'</a></option>';
                                 }
                             ?> 
                         </select>
@@ -129,31 +171,13 @@
                 </div>
             </div>
         </div>
-        <!-- <div class="nav-item">
-            <div class="container">
-                <div class="nav-depart">
-                    <div class="depart-btn">
-                        <i class="ti-menu"></i>
-                        <span>Products By Categories</span>
-                        <ul class="depart-hover">
-                           
-                        </ul>
-                    </div>
-                </div>
-                <nav class="nav-menu mobile-menu">
-                    <ul>
-                        <li><a href="./product.php">All Products</a></li>
-                    </ul>
-                </nav>
-                <div id="mobile-menu-wrap"></div>
-            </div>
-        </div> --> 
+     
         <div class="container">
             <div class="inner-header">
                 <div class="row">
                     <div class="col-lg-2 col-md-2">
                         <div class="logo">
-                            <a href="./index.html">
+                            <a href="#">
                                 <img src="img/logo.png" alt="">
                             </a>
                         </div>
@@ -161,7 +185,7 @@
                     <div class="col-lg-7 col-md-7">
                         <div class="advanced-search">
                             <form action="#" class="input-group">
-                                <input type="text" placeholder="Search">
+                                <input id="search-input" type="text" onkeyup="search()" placeholder="Search">
                                 <button type="button"><i class="ti-search"></i></button>
                             </form>
                         </div>
@@ -195,7 +219,7 @@
                         <div class="col-lg-10 offset-lg-1">
                                 <div class="contact-form">
                                     <div class="leave-comment">                             
-                                        <form action="product.php" method="post" enctype="multipart/form-data">
+                                        <form name="product" action="product.php" method="post" enctype="multipart/form-data">
                                             <div class="row">
                                                 <div class="col-lg-12 form-group" >
                                                     <input id="input_name" class="form-control" type="text" placeholder="Name" name="name" >
@@ -208,7 +232,7 @@
                                                 </div>
                                                 <div class="col-lg-12 form-group">
                                                     <select id="input_cat" class="form-control"  name="categorie" >
-                                                        <option value="" disabled selected hidden>Choose Categorie...</option>
+                                                        <option value="" disabled selected hidden>Choose Category...</option>
                                                         <?php
                                                             $cat = new categorie($db_config)  ;
                                                             $req = $cat->get_all_cat();
@@ -235,7 +259,7 @@
                                                 </div>
                                                 <div class="col-lg-12 input-group" >
                                                     <div class="custom-file">
-                                                    <input id="input_img" type="file"  class="custom-file-input" id="image" name="image" required accept="image/png,image/jpg,image/jpeg">
+                                                    <input id="input_img" type="file"  class="custom-file-input" id="image" name="image" accept="image/x-png,image/jpg,image/jpeg">
                                                     <label class="custom-file-label" for="inputGroupFile04">Upload image</label>                                           
                                                     </div> 
                                                                                             
@@ -248,7 +272,7 @@
                                                         }
                                                     ?> 
                                                 </div>
-                                                <div class="col-lg-12 form-group">
+                                                <div class="pt-3 col-lg-12 form-group">
                                                     <br>
                                                     <button type="submit" class="site-btn" name="add" id="myBtn">Add Product</button>
                                                         
@@ -263,6 +287,96 @@
             </div>
         </div>
     </div>
+
+    <!-- update modal --> 
+    <div class="modal fade update-modal-lg" tabindex="-1" role="dialog" id="update_modal_id"  
+    aria-labelledby="myLargeModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg modal-dialog-centered" id="update_modal_id">
+            <div class="modal-content">
+                <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLongTitle">Update Product</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+                </div>
+                <div class="modal-body">
+                        <div class="col-lg-10 offset-lg-1">
+                                <div class="contact-form">
+                                    <div class="leave-comment">                             
+                                        <form name="product-update" action="product.php" method="post" enctype="multipart/form-data">
+                                            <div class="row">
+                                                <div class="col-lg-12 form-group" >
+                                                    <input id="update_input_name" class="form-control" type="text" placeholder="Name" name="name" >    
+                                                    <input id="update_id" class="form-control" type="hidden" placeholder="Name" name="id" value="">
+                                                    <p id="name" style="margin-bottom: 0px"></p>
+                                                    <?php
+                                                        if(isset($erName)){
+                                                            echo '<p>'.$erName.'</p>';
+                                                        }
+                                                    ?> 
+                                                </div>
+                                                <div class="col-lg-12 form-group">
+                                                    <select id="update_input_cat" class="form-control"  name="categorie" >
+                                                        <option value="" disabled selected hidden>Choose Category...</option>
+                                                        <?php
+                                                            $cat = new categorie($db_config)  ;
+                                                            $req = $cat->get_all_cat();
+                                                            while ($ligne = $req->fetch()) {
+                                                                echo '<option value="'.$ligne['id'].'">'.$ligne['nom'].'</option>';
+                                                            }
+                                                        ?>
+                                                    </select> 
+                                                    <p id="update_cat" style="margin-bottom: 0px"></p>
+                                                    <?php
+                                                        if(isset($erCateg)){
+                                                            echo '<p>'.$erCateg.'</p>';
+                                                        }
+                                                    ?>                                     
+                                                </div>
+                                                <div class="col-lg-12 form-group" >
+                                                    <textarea id="update_input_desc" class="form-control" placeholder="description" name="description" ></textarea>
+                                                    <p id="update_desc" style="margin-bottom: 0px"></p>
+                                                    <?php
+                                                        if(isset($erDescription)){
+                                                            echo '<p>'.$erDescription.'</p>';
+                                                        }
+                                                    ?> 
+                                                </div>
+                                                <div class="col-lg-12 form-group" >
+                                                    <p class="mb-2">Actual Image</p>
+                                                    <img style="max-width: 200px" id="old_img" src="" alt="">
+                                                </div>
+                                                <div class="col-lg-12 input-group" >
+                                                    <div class="custom-file">
+                                                    <input id="update_input_img" type="file"  class="custom-file-input" id="update_image" name="image" accept="image/x-png,image/jpg,image/jpeg">
+                                                    <label class="custom-file-label" for="inputGroupFile04">Change image</label>                                           
+                                                    </div> 
+                                                                                            
+                                                </div>
+                                                <p id="update_img" style="margin-bottom: 0px"></p>  
+                                                <div class="col-lg-12">
+                                                    <?php
+                                                        if(isset($erImage)){
+                                                            echo '<p>'.$erImage.'</p>';
+                                                        }
+                                                    ?> 
+                                                </div>
+                                                <div class="pt-3 col-lg-12 form-group">
+                                                    <br>
+                                                    <button type="submit" class="site-btn" name="update" id="update_myBtn">Update Product</button>
+                                                        
+                                                </div>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                </div>
+            
+            </div>
+        </div>
+    </div>                                     
+
     <!-- Breadcrumb Section Begin -->
     <!-- <div class="breacrumb-section">
         <div class="container">
@@ -277,6 +391,7 @@
     </div> -->
     <!-- Breadcrumb Section Begin -->
 
+    
     <!-- Shopping Cart Section Begin -->
     <section class="blog-section spad" style="padding-top:40px;">
         <div class="container">
@@ -284,7 +399,7 @@
                 <div class="col-lg-3 col-md-6 col-sm-8 order-2 order-lg-1">
                     <div class="blog-sidebar">
                         <div class="search-form">
-                            <h4>Add New Categorie</h4>
+                            <h4>Add New Category</h4>
                             <form action="product.php" method="post">
                                 <input type="text" placeholder="Name" name="name_categ" autocomplete="off">
                                 <?php
@@ -303,9 +418,9 @@
                                 echo'<table>';
                                 while ($ligne = $req->fetch()) {
                                     echo'<tr> <td width="80%">'.$ligne['nom'].'</td>';
-                                    echo'<td width="10%"><a href="update.php?id_prod='.$ligne['id'].'"><i class="ti-pencil-alt" style="color: #e7ab3c;">
+                                    echo'<td width="10%"><a href="update.php?id_prod='.$ligne['id'].'"><i class="color ti-pencil-alt">
                                     </i></a></td>';                               
-                                    echo '<td width="1%"><a href="delete.php?id_categ='.$ligne['id'].'"><i class="ti-close" style="color: #e7ab3c;"></i></a></td></tr>';
+                                    echo '<td width="1%"><a href="delete.php?id_categ='.$ligne['id'].'"><i class="color ti-close"></i></a></td></tr>';
                                 }
                                 echo'</table>';
                             ?> 
@@ -315,34 +430,40 @@
                 </div>
                 <div class="col-lg-9 order-1 order-lg-2">
                     <div class="cart-table table" id="example">
-                        <table>
+                        <table id="myTable">
                             <thead>
                                 <tr>
                                     <th style="text-align:left;padding-left:25px;">Image</th>
                                     <th style="text-align:left;">Product Name</th>
-                                    <th style="text-align:left;">Categorie</th>
+                                    <th style="text-align:left;">Category</th>
                                     <th class="p-name" style="text-align:left;">Description</th>                                  
-                                    <th style="text-align:left;">Update</th>
-                                    <th style="text-align:left;">Delete</th>
+                                    <th style="text-align:left;">Actions</th>
+                                    
                                 </tr>
                             </thead>
                             <tbody>                              
                                     <?php
-                                        $req = $product->get_all_product()  ;
+                                        if(isset($_GET['idcateg'])){
+                                            $req = $db_config->prepare("SELECT * FROM produit WHERE id_categ=:uid  ");
+                                            $req->execute(array(':uid'=>$_GET['idcateg']));                                          
+                                        }
+                                        else {
+                                            $req = $product->get_all_product()  ;
+                                        }                                     
                                         while ($ligne = $req->fetch()) 
                                         {
                                             echo'<tr>';
-                                            echo'<td class="cart-pic first-row"><img class="imgp" src="../images/'.$ligne['url_image'].'" alt=""></td>';
+                                            echo'<td class="cart-pic first-row"><img data="'.$ligne['id'].'" class="imgp" src="../images/'.$ligne['url_image'].'" alt=""></td>';
                                             echo'<td class="qua-col first-row"><h5  style="text-align:left">'.$ligne['nom'].'</h5></td>';
-                                            echo'<td class="p-price first-row"><span>';
-                                            $req2 = $db_config->prepare("SELECT nom FROM categorie WHERE id=:uid  ");
+                                            echo'<td class="p-price first-row"><span';
+                                            $req2 = $db_config->prepare("SELECT nom, id FROM categorie WHERE id=:uid  ");
                                             $req2->execute(array(':uid'=>$ligne['id_categ']));
                                             //On récupère le résultat
                                             $ligne2=$req2->fetch(PDO::FETCH_ASSOC);
-                                            echo $ligne2['nom'].'</span></td>';
+                                            echo ' data="'.$ligne2['id'].'">' . $ligne2['nom'].'</span></td>';
                                             echo'<td class="cart-title first-row"><p>'.$ligne['description'].'</p></td>';
-                                            echo'<td class="total-price first-row"><a  style="color: #e7ab3c;" class="action-btn" href="update.php?id_prod='.$ligne['id'].'"><i class="ti-pencil-alt" style="color: #e7ab3c;"></i> Update</a></td>';
-                                            echo'<td class="total-price first-row"><a  style="color: #e7ab3c;" class="action-btn" href="delete.php?id_prod='.$ligne['id'].'"><i class="ti-close" style="color: #e7ab3c;"></i> Delete</a></td> ';
+                                            echo'<td class="total-price first-row"><a data-toggle="modal" data-target=".update-modal-lg" class="color action-btn updateBtn" href="#" onclick="updateInputs('.$ligne['id'].')"><i class="ti-pencil-alt color"></i></a>';
+                                            echo'&nbsp;&nbsp;&nbsp;<a data-toggle="tooltip" data-placement="top" title="Delete" class="color action-btn" href="javascript:;" onclick="deleteProduct('.$ligne['id'].')"><i class="ti-close color" ></i></a></td> ';
                                             echo'</tr>';
                                         }
                                     ?>                       
@@ -354,8 +475,6 @@
         </div>
     </section>
     <!-- Shopping Cart Section End -->
-
- 
 
     <!-- Footer Section Begin -->
       <!-- Footer Section Begin -->
@@ -387,39 +506,93 @@ Copyright &copy;<script>document.write(new Date().getFullYear());</script> All r
     <script src="js/jquery.slicknav.js"></script>
     <script src="js/owl.carousel.min.js"></script>
     <script src="js/main.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@9"></script>
+    <script src="https://cdn.jsdelivr.net/jquery.validation/1.15.1/jquery.validate.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/jquery.validation/1.16.0/additional-methods.min.js"></script>
+    <script src="js/form-validation.js"></script>
     <!-- 
         input front validation 
     -->
     <script>
-    $(document).ready(function() {
-    $('form').on('submit', function(e){
-        let isvalid = true;
-        let erreur = '';
-        let input_nom = $("#input_name");
-        let input_desc = $("#input_desc");
-        let input_cat = $("#input_cat");
-        let input_img = $("#input_img");
-        console.log(input_img);
-        if (input_nom.val().length  <= 1) {
-            isvalid = false;
-            $( "#name" ).text( "Write name of product" );
+
+        $(document).on('click','.updateBtn', function() {
+            var rowIndex = $(this).closest('tr').get(0).rowIndex;
+        
+            // get data before update
+            var row = $('#myTable tr').eq(rowIndex);
+
+            var image = row.children(0).first().children('img').attr('src');
+            var id_product = row.children(0).first().children('img').attr('data');
+            var productname = row.children()[1].innerText;
+            var categoryId = row.children()[2].childNodes[0].getAttribute('data');
+            var description = row.children()[3].innerText;
+        
+
+            // select elements to update
+        $("#update_input_name").val(productname);
+        $("#update_input_cat").val(categoryId);
+        $("#update_input_desc").val(description);
+        $("#old_img").attr('src', image);
+        $("#update_id").val(id_product);
+        });
+
+ 
+        $( "#target" ).click(function() {
+            alert( "Handler for .click() called." );
+        });
+
+        function deleteProduct(id) {
+            //href="delete.php?id_prod='.$ligne['id'].'"
+            console.log('hi')
+            Swal.fire({
+                title: 'Delete Product',
+                text: "Are you sure? You won't be able to revert this!",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Yes, delete it!'
+                }).then((result) => {
+                if (result.value) {
+                    
+                    Swal.fire(
+                    'Deleted!',
+                    'Your file has been deleted.',
+                    'success'
+                    ).then(r => {
+                        window.location.href = './delete.php?id_prod=' + id
+                    })
+                }
+            })
         }
-        if (input_desc.val().length  <= 1 ){
-            isvalid = false;
-            $( "#desc" ).text( "Write description of product" );
-        }  
-        if (input_cat.val()  == undefined ) {
-            isvalid = false; 
-            $( "#cat" ).text( "select category of product" ); 
-        } 
-        if (!input_img.val().includes('.png') || !input_img.val().includes('.jpg') || !input_img.val().includes('.jpeg')) {
-            isvalid = false;
-            $( "#img" ).text( "upload image of product" ); 
-        }  
-        if (!isvalid) e.preventDefault();
-        else $("#submit").unbind('click').click(); ; 
-  });
-});
+
+
+       function search() {
+            // Declare variables
+            var input, filter, table, tr, td, i, txtValue;
+            input = document.getElementById("search-input");
+            filter = input.value.toUpperCase();
+            table = document.getElementById("myTable");
+            tr = table.getElementsByTagName("tr");
+
+            // Loop through all table rows, and hide those who don't match the search query
+            for (i = 0; i < tr.length; i++) {
+                td = tr[i].getElementsByTagName("td")[1];
+                if (td) {
+                    txtValue = td.textContent || td.innerText;
+                    if (txtValue.toUpperCase().indexOf(filter) > -1) {
+                        tr[i].style.display = "";
+                    } else {
+                        tr[i].style.display = "none";
+                    }
+                }
+            }
+        }
+
+        function selectCategory(id) {
+            window.location.href = "product.php?idcateg="+id;
+        }
+
     </script>
 </body>
 
