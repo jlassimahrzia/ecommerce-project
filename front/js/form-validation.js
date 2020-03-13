@@ -64,4 +64,22 @@ $(function () {
             form.submit();
         }
     });
+
+  
+    $("form[name='upcat']").validate({
+        // Specify validation rules
+        rules: {
+            name: {
+                required: true,
+                minlength: 2
+            }
+        },
+        // Specify validation error messages
+        messages: {
+            name: "Please enter category name"
+        },
+        submitHandler: function (form) {
+            form.submit();
+        }
+    });
 });

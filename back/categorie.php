@@ -38,6 +38,9 @@ class categorie {
     public function delete($id){
         try
         {
+            $sql ="DELETE FROM produit WHERE id_categ=:id";
+            $req = $this->db->prepare($sql);
+            $req->execute(array(":id"=>$id));
             $sql ="DELETE FROM categorie WHERE id=:id";
             $req = $this->db->prepare($sql);
             $req->execute(array(":id"=>$id));
