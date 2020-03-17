@@ -93,6 +93,34 @@ img {
 	max-width: 100%;
 }
 
+.img {
+	width:262px; /* or whatever width you want. */
+	height: 294px;
+	max-height: 294px;
+	overflow: hidden;
+	transition: transform .5s ease;
+}
+.img:hover {
+  transform: scale(1.1);
+}
+
+.lang_selector{
+	color: #000;
+	letter-spacing: 3px;
+	padding: 5px;
+}
+.lang_selector:hover{
+	color: #000;
+}
+.lang_selector:link {color: #000;}      /* unvisited link */
+.lang_selector:visited {color: #000;}  /* visited link */
+.lang_selector:hover {color: #000;}  /* mouse over link */
+.lang_selector:active {color: #000;}  /* selected link */ 
+.flag{
+	margin-right: 3px;
+	margin-left:3px;
+}
+
 input:focus,
 select:focus,
 button:focus,
@@ -165,7 +193,7 @@ ol {
 }
 
 .spad {
-	padding-top   : 100px;
+	/*padding-top   : 100px;*/
 	padding-bottom: 100px;
 }
 
@@ -831,8 +859,8 @@ ol {
 -----------------------*/
 
 .hero-items .single-hero-items {
-	height     : 725px;
-	padding-top: 210px;
+	height     : 600px;
+	padding-top: 140px;
 }
 
 .hero-items .single-hero-items span {
@@ -902,7 +930,7 @@ ol {
 }
 
 .hero-items .off-card h2 {
-	font-size     : 32px;
+	font-size     : 25px;
 	font-weight   : 700;
 	color         : #ffffff;
 	text-transform: uppercase;
@@ -1252,8 +1280,8 @@ ol {
 }
 
 .product-item .pi-text .catagory-name {
-	font-size     : 10px;
-	color         : #b2b2b2;
+	font-size     : 12px;
+	color         : var(--main-color);
 	font-weight   : 700;
 	letter-spacing: 2px;
 	text-transform: uppercase;
@@ -1278,7 +1306,7 @@ ol {
 	font-size      : 14px;
 	font-weight    : 400;
 	color          : #b2b2b2;
-	text-decoration: line-through;
+	/*text-decoration: line-through;*/
 }
 
 /*---------------------
@@ -1290,6 +1318,7 @@ ol {
 	padding-bottom: 80px;
 	margin-left   : 65px;
 	margin-right  : 65px;
+	margin-top  : 65px;
 }
 
 .countdown-timer {
@@ -1331,7 +1360,7 @@ ol {
 .man-banner {
 	padding-right : 65px;
 	padding-left  : 65px;
-	padding-top   : 80px;
+	/*padding-top   : 80px;*/
 	padding-bottom: 80px;
 }
 
@@ -1405,7 +1434,7 @@ ol {
 -----------------------*/
 
 .latest-blog {
-	padding-top   : 72px;
+	/*padding-top   : 72px;*/
 	padding-bottom: 80px;
 }
 
@@ -1516,7 +1545,7 @@ ol {
 
 .footer-section {
 	background    : #191919;
-	/* padding-top: 75px; */
+	padding-top: 75px;
 }
 
 .footer-left {
@@ -1728,7 +1757,7 @@ ol {
 -----------------------*/
 
 .product-shop {
-	padding-top   : 80px;
+	padding-top   : 10px;
 	padding-bottom: 80px;
 }
 
@@ -4506,4 +4535,154 @@ ol {
 
 h4 {
 	font-size: 16px;
+}
+
+
+/* line 31, ../../Arafath/CL/CL October/216. Consulting/HTML/scss/_counter.scss */
+.case_study_area {
+  padding-top: 0px;
+}
+
+@media (max-width: 767px) {
+  /* line 31, ../../Arafath/CL/CL October/216. Consulting/HTML/scss/_counter.scss */
+  .case_study_area {
+    padding-top: 50px;
+  }
+}
+
+/* line 36, ../../Arafath/CL/CL October/216. Consulting/HTML/scss/_counter.scss */
+.case_study_area.case_page {
+  padding-bottom: 0px;
+}
+
+@media (max-width: 767px) {
+  /* line 36, ../../Arafath/CL/CL October/216. Consulting/HTML/scss/_counter.scss */
+  .case_study_area.case_page {
+    padding-bottom: 50px;
+  }
+}
+
+/* line 41, ../../Arafath/CL/CL October/216. Consulting/HTML/scss/_counter.scss */
+.case_study_area.case_page .single_case {
+  margin-bottom: 40px;
+}
+
+/* line 45, ../../Arafath/CL/CL October/216. Consulting/HTML/scss/_counter.scss */
+.case_study_area .border_bottom {
+  border-bottom: 1px solid #E8E8E8;
+  margin-bottom: 50px;
+  padding-bottom: 60px;
+}
+
+/* line 50, ../../Arafath/CL/CL October/216. Consulting/HTML/scss/_counter.scss */
+.case_study_area .single_case {
+  -webkit-box-shadow: 0 3px 6px rgba(0, 0, 0, 0.05);
+  -moz-box-shadow: 0 3px 6px rgba(0, 0, 0, 0.05);
+  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.05);
+  margin-bottom: 60px;
+  -webkit-border-radius: 10px;
+  -moz-border-radius: 10px;
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+/* line 55, ../../Arafath/CL/CL October/216. Consulting/HTML/scss/_counter.scss */
+.case_study_area .single_case .case_thumb {
+  overflow: hidden;
+}
+
+/* line 58, ../../Arafath/CL/CL October/216. Consulting/HTML/scss/_counter.scss */
+.case_study_area .single_case .case_thumb img {
+  width: 100%;
+  -webkit-transform: scale(1);
+  -moz-transform: scale(1);
+  -ms-transform: scale(1);
+  transform: scale(1);
+  -webkit-transition: 0.3s;
+  -moz-transition: 0.3s;
+  -o-transition: 0.3s;
+  transition: 0.3s;
+}
+
+/* line 64, ../../Arafath/CL/CL October/216. Consulting/HTML/scss/_counter.scss */
+.case_study_area .single_case .case_heading {
+  padding: 25px 29px;
+}
+
+/* line 66, ../../Arafath/CL/CL October/216. Consulting/HTML/scss/_counter.scss */
+.case_study_area .single_case .case_heading span {
+  color: #919191;
+  font-size: 13px;
+  font-weight: 400;
+}
+
+/* line 72, ../../Arafath/CL/CL October/216. Consulting/HTML/scss/_counter.scss */
+.case_study_area .single_case .case_heading h3 a {
+  font-weight: 500;
+  color: #001D38;
+  font-size: 18px;
+}
+
+/* line 76, ../../Arafath/CL/CL October/216. Consulting/HTML/scss/_counter.scss */
+.case_study_area .single_case .case_heading h3 a:hover {
+  color: #5DB2FF;
+}
+
+/* line 84, ../../Arafath/CL/CL October/216. Consulting/HTML/scss/_counter.scss */
+.case_study_area .single_case:hover .case_thumb {
+  overflow: hidden;
+}
+
+/* line 87, ../../Arafath/CL/CL October/216. Consulting/HTML/scss/_counter.scss */
+.case_study_area .single_case:hover .case_thumb img {
+  width: 100%;
+  -webkit-transform: scale(1.05);
+  -moz-transform: scale(1.05);
+  -ms-transform: scale(1.05);
+  transform: scale(1.05);
+}
+
+/* line 95, ../../Arafath/CL/CL October/216. Consulting/HTML/scss/_counter.scss */
+.case_study_area .owl-carousel .owl-nav div {
+  border: 1px solid #E3E3E3;
+  color: #DDDBDB;
+  left: -70px;
+}
+
+/* line 100, ../../Arafath/CL/CL October/216. Consulting/HTML/scss/_counter.scss */
+.case_study_area .owl-carousel .owl-nav div.owl-next {
+  left: auto;
+  right: -70px;
+}
+
+/* line 106, ../../Arafath/CL/CL October/216. Consulting/HTML/scss/_counter.scss */
+.portfolio-menu {
+  margin-bottom: 40px;
+}
+
+/* line 108, ../../Arafath/CL/CL October/216. Consulting/HTML/scss/_counter.scss */
+.portfolio-menu button {
+  font-size: 15px;
+  font-weight: 400;
+  color: #1F1F1F;
+  border: none;
+  background: transparent;
+  border: 1px solid transparent;
+  padding: 5px 17px;
+  margin: 0 2px;
+  -webkit-border-radius: 30px;
+  -moz-border-radius: 30px;
+  border-radius: 30px;
+  cursor: pointer;
+}
+
+/* line 119, ../../Arafath/CL/CL October/216. Consulting/HTML/scss/_counter.scss */
+.portfolio-menu button.active {
+  border: 1px solid #5DB2FF;
+  color: #5DB2FF;
+}
+
+/* line 123, ../../Arafath/CL/CL October/216. Consulting/HTML/scss/_counter.scss */
+.portfolio-menu button:focus {
+  outline: none;
 }

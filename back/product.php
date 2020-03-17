@@ -52,15 +52,16 @@ class product {
         }
     }
     
-    public function add($nom,$desc,$idc,$img){  
+    public function add($nom,$desc,$idc,$img,$prix){  
         try
         {
             $product = new product($this->db);
             if(!empty($img)){
-                $sql = "INSERT INTO  produit(nom,description,url_image,id_categ) VALUES 
-                (:nom , :description , :url_image , :id_categ)";
+                $sql = "INSERT INTO  produit(nom,description,url_image,prix,id_categ) VALUES 
+                (:nom , :description , :url_image , :prix , :id_categ)";
                 $req = $this->db->prepare($sql);
-                $req->execute(array(":nom"=>$nom, ":description"=>$desc , ":url_image"=>$img , ":id_categ"=>$idc ));
+                $req->execute(array(":nom"=>$nom, ":description"=>$desc , ":url_image"=>$img , ":prix"=>$prix 
+                , ":id_categ"=>$idc ));
             }
             return true ;
         }          
@@ -70,21 +71,21 @@ class product {
         }
     }
 
-    public function update($id,$nom,$desc,$idc,$image = NULL){
+    public function update($id,$nom,$desc,$idc,$prix,$image = NULL){
         try
         {
             if (isset($image)){
-                 $sql ="UPDATE produit SET nom=:nom , description=:description , id_categ=:id_categ, url_image=:image
+                $sql ="UPDATE produit SET nom=:nom , description=:description , id_categ=:id_categ, url_image=:image , prix=:prix
                 WHERE id=:id ";
                 $req = $this->db->prepare($sql);
-                $req->execute(array(":id"=>$id , ":nom"=>$nom , ":description"=>$desc , ":id_categ"=>$idc, ":image" => $image));
+                $req->execute(array(":id"=>$id , ":nom"=>$nom , ":description"=>$desc , ":prix"=>$prix ,":id_categ"=>$idc, ":image" => $image));
                 return true ;
             }
             else {
-                $sql ="UPDATE produit SET nom=:nom , description=:description , id_categ=:id_categ
+                $sql ="UPDATE produit SET nom=:nom , description=:description , id_categ=:id_categ , prix=:prix
                 WHERE id=:id ";
                 $req = $this->db->prepare($sql);
-                $req->execute(array(":id"=>$id , ":nom"=>$nom , ":description"=>$desc , ":id_categ"=>$idc));
+                $req->execute(array(":id"=>$id , ":nom"=>$nom , ":description"=>$desc , ":prix"=>$prix , ":id_categ"=>$idc));
                 return true ;
             }
            

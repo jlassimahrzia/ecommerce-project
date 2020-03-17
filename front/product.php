@@ -36,6 +36,7 @@
             $valide=true ;
 
             $name=$_POST['name'] ;
+            $price=$_POST['price'] ;
             if(!empty($_POST['categorie'])){
                 $categ=$_POST['categorie'];
             }         
@@ -58,6 +59,10 @@
                 $erImage="upload image of product"  ;
                 $valide=false ;
             }
+            if(empty($price)){
+                $erPrice="enter price of product"  ;
+                $valide=false ;
+            }
             
             if($product->test_img()!=null){
                 $erImage=$product->test_img();
@@ -68,7 +73,7 @@
             if($valide){     
                 $image=$product->upload_img();         
                 if($image!=null){                  
-                    if($product->add($name,$description,$categ,$image)){
+                    if($product->add($name,$description,$categ,$image,$price)){
                         //echo "sucess";
                     }
                 }
@@ -94,6 +99,7 @@
             $valide=true ;
             $id = $_POST['id']; //product id
             $name=$_POST['name'] ;
+            $price=$_POST['price'] ;
             if(!empty($_POST['categorie'])){
                 $categ=$_POST['categorie'];
             }         
@@ -112,16 +118,20 @@
                 $erDescription="Write description of product"  ;
                 $valide=false ;
             }
+            if(empty($price)){
+                $erPrice="Write description of product"  ;
+                $valide=false ;
+            }
             
             if($valide){     
                 $image=$product->upload_img();         
                 if($image!=null){   
                     // update with image               
-                   $product->update($id, $name,$description,$categ,$image);      
+                   $product->update($id, $name,$description,$categ,$price,$image);      
                 }
                 else {
                     // update without image
-                    $product->update($id, $name,$description,$categ);
+                    $product->update($id, $name,$description,$categ,$price);
             
                 }
                 
@@ -271,6 +281,15 @@
                                                         }
                                                     ?> 
                                                 </div>
+                                                <div class="col-lg-12 form-group" >
+                                                    <input id="input_price" class="form-control" type="text" placeholder="Price" name="price" >
+                                                    <p id="price" style="margin-bottom: 0px"></p>
+                                                    <?php
+                                                        if(isset($erPrice)){
+                                                            echo '<p>'.$erPrice.'</p>';
+                                                        }
+                                                    ?> 
+                                                </div>
                                                 <div class="col-lg-12 input-group" >
                                                     <div class="custom-file">
                                                     <input id="input_img" type="file"  class="custom-file-input" id="image" name="image" 
@@ -347,6 +366,15 @@
                                                             echo '<p>'.$erCateg.'</p>';
                                                         }
                                                     ?>                                     
+                                                </div>
+                                                <div class="col-lg-12 form-group" >
+                                                    <input id="update_input_price" class="form-control" type="text" placeholder="Price" name="price" > 
+                                                    <p id="name" style="margin-bottom: 0px"></p>
+                                                    <?php
+                                                        if(isset($erPrice)){
+                                                            echo '<p>'.$erPrice.'</p>';
+                                                        }
+                                                    ?> 
                                                 </div>
                                                 <div class="col-lg-12 form-group" >
                                                     <textarea id="update_input_desc" class="form-control" placeholder="description" name="description" ></textarea>
@@ -480,6 +508,7 @@
                                 <tr>
                                     <th style="text-align:left;padding-left:25px;">Image</th>
                                     <th style="text-align:left;">Product Name</th>
+                                    <th style="text-align:left;">Price</th>
                                     <th style="text-align:left;">Category</th>
                                     <th class="p-name" style="text-align:left;">Description</th>                                  
                                     <th style="text-align:left;">Actions</th>
@@ -500,6 +529,7 @@
                                             echo'<tr>';
                                             echo'<td class="cart-pic first-row"><img data="'.$ligne['id'].'" class="imgp" src="../images/'.$ligne['url_image'].'" alt=""></td>';
                                             echo'<td class="qua-col first-row"><h5  style="text-align:left">'.$ligne['nom'].'</h5></td>';
+                                            echo'<td class="p-price first-row"><span>'.$ligne['prix'].'</span></td>';
                                             echo'<td class="p-price first-row"><span';
                                             $req2 = $db_config->prepare("SELECT nom, id FROM categorie WHERE id=:uid  ");
                                             $req2->execute(array(':uid'=>$ligne['id_categ']));
@@ -593,14 +623,16 @@ Copyright &copy;<script>document.write(new Date().getFullYear());</script> All r
             var image = row.children(0).first().children('img').attr('src');
             var id_product = row.children(0).first().children('img').attr('data');
             var productname = row.children()[1].innerText;
-            var categoryId = row.children()[2].childNodes[0].getAttribute('data');
-            var description = row.children()[3].innerText;
+            var price = row.children()[2].innerText;
+            var categoryId = row.children()[3].childNodes[0].getAttribute('data');
+            var description = row.children()[4].innerText;
         
 
             // select elements to update
             $("#update_input_name").val(productname);
             $("#update_input_cat").val(categoryId);
             $("#update_input_desc").val(description);
+            $("#update_input_price").val(price);
             $("#old_img").attr('src', image);
             $("#update_id").val(id_product);
         });
@@ -712,7 +744,7 @@ Copyright &copy;<script>document.write(new Date().getFullYear());</script> All r
             if(id=="all")
                 window.location.href = "product.php";
         }
-
+        
     </script>
 </body>
 

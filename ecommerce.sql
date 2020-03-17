@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Hôte : 127.0.0.1
--- Généré le :  Dim 16 fév. 2020 à 18:05
+-- Généré le :  mar. 17 mars 2020 à 20:18
 -- Version du serveur :  10.1.33-MariaDB
 -- Version de PHP :  7.2.6
 
@@ -71,6 +71,7 @@ CREATE TABLE `produit` (
   `nom` varchar(200) NOT NULL,
   `description` text NOT NULL,
   `url_image` varchar(500) NOT NULL,
+  `prix` double NOT NULL DEFAULT '0',
   `id_categ` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
@@ -78,8 +79,14 @@ CREATE TABLE `produit` (
 -- Déchargement des données de la table `produit`
 --
 
-INSERT INTO `produit` (`id`, `nom`, `description`, `url_image`, `id_categ`) VALUES
-(28, 'jlassi mahrzia', 'desc', '5e41d7543818d_1581373268.jpg', 33);
+INSERT INTO `produit` (`id`, `nom`, `description`, `url_image`, `prix`, `id_categ`) VALUES
+(32, 'PARODONTAX', 'is a toothpaste that is clinically proven to help reduce bleeding gums. When used twice daily, it significantly reduces plaque and bleeding gums after 12 weeks.', '5e7109bd7aaa5_1584466365.png', 50, 33),
+(33, 'nova dent', 'Teeth whitening is one of the safest and conservative forms of cosmetic dental treatment', '5e7109ad621c1_1584466349.jpg', 12.5, 33),
+(34, 'RESINE DENTAIRE BLANCHE', 'Résine dentaire blanche pour réparation des dents artificielles des prothèses dentaires pour resceller des facettes dentaires des dents prothètiques', '5e5057f9be1d7_1582323705.jpg', 40.6, 35),
+(35, 'blanchiment des dents', 'Les produits de blanchiment des dents vendus sans ordonnance peuvent constituer le moyen le moins cher pour obtenir un sourire hollywoodien et peuvent être très efficaces', '5e5058bc7d008_1582323900.jpg', 20, 35),
+(36, 'BRAND', 'Blanchiment des annonces de pâte dentifrice Modèle de dent et design d\'emballage de produit', '5e505992b07a7_1582324114.jpg', 8000, 35),
+(37, 'Poussée dentaire, 30 x 1 ml', 'Tout médicament ou produit de santé naturel peut causer des effets indésirables sérieux ou des interactions avec d’autres médicaments.', '5e505a127f023_1582324242.png', 9000, 35),
+(38, 'produit', 'description', '5e71069d18717_1584465565.jpg', 10.56, 33);
 
 --
 -- Index pour les tables déchargées
@@ -119,13 +126,13 @@ ALTER TABLE `admin`
 -- AUTO_INCREMENT pour la table `categorie`
 --
 ALTER TABLE `categorie`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=36;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=37;
 
 --
 -- AUTO_INCREMENT pour la table `produit`
 --
 ALTER TABLE `produit`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=29;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=40;
 
 --
 -- Contraintes pour les tables déchargées
