@@ -82,7 +82,7 @@
                                 $cat = new categorie($db_config)  ;
                                 $req = $cat->get_all_cat();
                                 while ($ligne = $req->fetch()) {
-                                    echo '<li><a href="shop.php?idcateg='.$ligne['id'].'">'.$ligne['nom'].'</a></li>';
+                                    echo '<li><a href="shop.php?idcateg='.$ligne['id'].'&idsouscateg='.$ligne['id'].'">'.$ligne['nom'].'</a></li>';
                                 }
                             ?> 
                         </ul>

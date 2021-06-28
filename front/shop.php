@@ -162,6 +162,7 @@
        
         <div class="container">
             <div class="row">
+                
                 <div class="col-lg-3 col-md-6 col-sm-8 order-2 order-lg-1 produts-sidebar-filter" data-aos="fade-up">
                     <div class="filter-widget">
                         <h4 class="fw-title">Categories</h4>
@@ -196,9 +197,10 @@
                             </div>
                             <div class="col-lg-5 col-md-5 text-right">
                                 <?php
-                                    if(isset($_GET['idcateg'])){
+                                    if(isset($_GET['idcateg'])&&isset($_GET['idsouscateg'])){
                                         $req = $db_config->prepare("SELECT * FROM produit WHERE id_categ=:uid  ");
-                                        $req->execute(array(':uid'=>$_GET['idcateg']));                                          
+                                        $req->execute(array(':uid'=>$_GET['idcateg']));  
+                                        echo  "sous category".$_GET['idsouscateg'];                                   
                                     }
                                     else {
                                         $req = $db_config->prepare("SELECT * FROM produit ") ;

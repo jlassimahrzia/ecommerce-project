@@ -21,10 +21,10 @@ class product {
             }
         }
         // Check if file already exists
-        if (file_exists($target_file)) {
+        /* if (file_exists($target_file)) {
             $erImage="Sorry, file already exists.";
             return $erImage;
-        }
+        } */
         // Check file size
         if ($_FILES["image"]["size"] > 500000) {
             $erImage="Sorry, your file is too large.";
@@ -52,16 +52,16 @@ class product {
         }
     }
     
-    public function add($nom,$desc,$idc,$img,$prix){  
+    public function add($nom,$desc,$idc,$idsubcat,$img,$prix){  
         try
         {
             $product = new product($this->db);
             if(!empty($img)){
-                $sql = "INSERT INTO  produit(nom,description,url_image,prix,id_categ) VALUES 
-                (:nom , :description , :url_image , :prix , :id_categ)";
+                $sql = "INSERT INTO produit(nom,description,url_image,prix,id_categ,id_sous_categ) VALUES 
+                (:nom , :description , :url_image , :prix , :id_categ , :idsubcat)";
                 $req = $this->db->prepare($sql);
                 $req->execute(array(":nom"=>$nom, ":description"=>$desc , ":url_image"=>$img , ":prix"=>$prix 
-                , ":id_categ"=>$idc ));
+                , ":id_categ"=>$idc , ":idsubcat"=>$idsubcat ));
             }
             return true ;
         }          
@@ -71,21 +71,21 @@ class product {
         }
     }
 
-    public function update($id,$nom,$desc,$idc,$prix,$image = NULL){
+    public function update($id,$nom,$desc,$idc,$idsubcat,$prix,$image = NULL){
         try
         {
             if (isset($image)){
-                $sql ="UPDATE produit SET nom=:nom , description=:description , id_categ=:id_categ, url_image=:image , prix=:prix
+                $sql ="UPDATE produit SET nom=:nom , description=:description , id_categ=:id_categ , id_sous_categ=:id_subcateg, url_image=:image , prix=:prix
                 WHERE id=:id ";
                 $req = $this->db->prepare($sql);
-                $req->execute(array(":id"=>$id , ":nom"=>$nom , ":description"=>$desc , ":prix"=>$prix ,":id_categ"=>$idc, ":image" => $image));
+                $req->execute(array(":id"=>$id , ":nom"=>$nom , ":description"=>$desc , ":prix"=>$prix ,":id_categ"=>$idc,":id_subcateg"=>$idsubcat, ":image" => $image));
                 return true ;
             }
             else {
-                $sql ="UPDATE produit SET nom=:nom , description=:description , id_categ=:id_categ , prix=:prix
+                $sql ="UPDATE produit SET nom=:nom , description=:description , id_categ=:id_categ , id_sous_categ=:id_subcateg, prix=:prix
                 WHERE id=:id ";
                 $req = $this->db->prepare($sql);
-                $req->execute(array(":id"=>$id , ":nom"=>$nom , ":description"=>$desc , ":prix"=>$prix , ":id_categ"=>$idc));
+                $req->execute(array(":id"=>$id , ":nom"=>$nom , ":description"=>$desc , ":prix"=>$prix , ":id_categ"=>$idc,":id_subcateg"=>$idsubcat));
                 return true ;
             }
            

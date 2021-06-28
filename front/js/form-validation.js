@@ -1,5 +1,5 @@
 // Wait for the DOM to be ready
-$(function () {
+$(function() {
 
     // add product form
     $("form[name='product']").validate({
@@ -10,6 +10,9 @@ $(function () {
                 minlength: 2
             },
             categorie: {
+                required: true,
+            },
+            subcategorie: {
                 required: true,
             },
             description: {
@@ -24,17 +27,18 @@ $(function () {
                 required: true,
                 accept: "image/*"
             }
-            
+
         },
         // Specify validation error messages
         messages: {
-            name: "Please enter product name",
-            categorie: "Please select category",
-            description: "Please enter description",
-            price:"Please enter price",
-            image: "Please select image"
+            name: "Veuillez saisir le nom du produit",
+            categorie: "Veuillez sélectionner une catégorie",
+            subcategorie: "Veuillez sélectionner une sous-catégorie",
+            description: "Veuillez saisir une description",
+            price: "Veuillez saisir le prix",
+            image: "Veuillez sélectionner une image"
         },
-        submitHandler: function (form) {
+        submitHandler: function(form) {
             form.submit();
         }
     });
@@ -52,6 +56,9 @@ $(function () {
             categorie: {
                 required: true,
             },
+            subcategorie: {
+                required: true,
+            },
             price: {
                 required: true,
                 number: true
@@ -67,13 +74,14 @@ $(function () {
         },
         // Specify validation error messages
         messages: {
-            name: "Please enter product name",
-            categorie: "Please select category",
-            description: "Please enter description",
-            price:"Please enter price",
-            image: "Please select image"
+            name: "Veuillez saisir le nom du produit",
+            categorie: "Veuillez sélectionner une catégorie",
+            subcategorie: "Veuillez sélectionner une sous-catégorie",
+            description: "Veuillez saisir une description",
+            price: "Veuillez saisir le prix",
+            image: "Veuillez sélectionner une image"
         },
-        submitHandler: function (form) {
+        submitHandler: function(form) {
             form.submit();
         }
     });
@@ -89,9 +97,9 @@ $(function () {
         },
         // Specify validation error messages
         messages: {
-            name: "Please enter category name"
+            name: "Veuillez saisir le nom de la catégorie"
         },
-        submitHandler: function (form) {
+        submitHandler: function(form) {
             form.submit();
         }
     });
@@ -104,27 +112,69 @@ $(function () {
                 required: true,
                 minlength: 2
             },
-            email:{
+            email: {
                 required: true,
                 email: true
             },
-            subject:{
+            subject: {
                 required: true,
                 minlength: 2
             },
-            message:{
+            message: {
                 required: true,
-                minlength: 2   
+                minlength: 2
             }
         },
         // Specify validation error messages
         messages: {
-            name: "Please enter your name",
-            email:"Please enter your email",
-            subject:"Please enter subject of the mail",
-            message:"Please write your message"
+            name: "S'il vous plaît entrez votre nom",
+            email: "Veuillez entrer votre email",
+            subject: "Veuillez saisir l'objet de l'email",
+            message: "Veuillez écrire votre message"
         },
-        submitHandler: function (form) {
+        submitHandler: function(form) {
+            form.submit();
+        }
+    });
+    // add sub-category form
+    $("form[name='addSubCategory']").validate({
+        // Specify validation rules
+        rules: {
+            name: {
+                required: true,
+                minlength: 2
+            },
+            categorie: {
+                required: true,
+            }
+        },
+        // Specify validation error messages
+        messages: {
+            name: "Veuillez saisir le nom de la sous-catégorie",
+            categorie: "Veuillez sélectionner une catégorie"
+        },
+        submitHandler: function(form) {
+            form.submit();
+        }
+    });
+    // add sub-category form
+    $("form[name='up_subcat']").validate({
+        // Specify validation rules
+        rules: {
+            name: {
+                required: true,
+                minlength: 2
+            },
+            categorie: {
+                required: true,
+            }
+        },
+        // Specify validation error messages
+        messages: {
+            name: "Veuillez saisir le nom de la sous-catégorie",
+            categorie: "Veuillez sélectionner une catégorie"
+        },
+        submitHandler: function(form) {
             form.submit();
         }
     });

@@ -28,6 +28,7 @@
         $admin = new authentication($db_config);
         $product = new product($db_config);
         $cat = new categorie($db_config)  ;
+        $sous_cat = new souscategorie($db_config)  ;
         if(!$admin->is_loggedin()) {
             $admin->redirect('login.php');
         }
@@ -39,12 +40,17 @@
             $price=$_POST['price'] ;
             if(!empty($_POST['categorie'])){
                 $categ=$_POST['categorie'];
-            }         
+            }
+            $subcateg=$_POST['subcategorie'];
             $description=$_POST['description'];
             $image=basename($_FILES["image"]["name"]);
             
             if(empty($name)){
                 $erName="Write name of product"  ;
+                $valide=false ;
+            }
+            if(!isset($subcateg)){
+                $erSubCateg="Select categorie of product"  ;
                 $valide=false ;
             }
             if(!isset($categ)){
@@ -73,7 +79,7 @@
             if($valide){     
                 $image=$product->upload_img();         
                 if($image!=null){                  
-                    if($product->add($name,$description,$categ,$image,$price)){
+                    if($product->add($name,$description,$categ,$subcateg,$image,$price)){
                         //echo "sucess";
                     }
                 }
@@ -105,13 +111,17 @@
             }         
             $description=$_POST['description'];
             $image=basename($_FILES["image"]["name"]);
-            
+            $subcateg=$_POST['subcategorie'];
             if(empty($name)){
                 $erName="Write name of product"  ;
                 $valide=false ;
             }
             if(!isset($categ)){
                 $erCateg="Select categorie of product"  ;
+                $valide=false ;
+            }
+            if(!isset($subcateg)){
+                $erSubCateg="Select categorie of product"  ;
                 $valide=false ;
             }
             if(empty($description)){
@@ -127,11 +137,11 @@
                 $image=$product->upload_img();         
                 if($image!=null){   
                     // update with image               
-                   $product->update($id, $name,$description,$categ,$price,$image);      
+                   $product->update($id, $name,$description,$categ,$subcateg,$price,$image);      
                 }
                 else {
                     // update without image
-                    $product->update($id, $name,$description,$categ,$price);
+                    $product->update($id, $name,$description,$categ,$subcateg,$price);
             
                 }
                 
@@ -149,7 +159,47 @@
                 $cat->update($id,$name);
             }
         }
+        if(isset($_POST['add_sub_category'])){
+            $valide=true ;
+            $name=$_POST['name'] ;
+            if(!empty($_POST['categorie'])){
+                $categ=$_POST['categorie'];
+            } 
             
+            if(empty($name)){
+                $erName="Write name of product"  ;
+                $valide=false ;
+            }
+            if(!isset($categ)){
+                $erCateg="Select categorie of product"  ;
+                $valide=false ;
+            }
+            if($valide){
+                $sous_cat->add($name,$categ);
+            }
+        }
+            
+        if(isset($_POST['update_subcat'])){
+            $valide=true ;
+            $id=$_POST['id'] ;
+            $name=$_POST['name'] ;
+            if(!empty($_POST['categorie'])){
+                $categ=$_POST['categorie'];
+            } 
+            
+            if(empty($name)){
+                $erName="Ecrire le nom de sous catégorie"  ;
+                $valide=false ;
+            }
+            if(!isset($categ)){
+                $erCateg="Sélectionner la catégorie qu'elle appartient"  ;
+                $valide=false ;
+            }
+            echo $id.$name.$categ ;
+            if($valide){
+                $sous_cat->update($id,$name,$categ);
+            }
+        }
       
     ?>
 </head>
@@ -166,7 +216,7 @@
             <div class="container">
                 <div class="ht-left">
                     <div class="mail-service">
-                        Products                     
+                        Produits                     
                     </div>
                     <div class="phone-service">
                        
@@ -176,8 +226,8 @@
                     <a href="logout.php" class="login-panel"><i class="ti-lock"></i>LogOut</a>
                     <div class="lan-selector">
                         <select class="language_drop" name="countries" id="countries" style="width:500px;" onchange="selectCategory(value);">                                  
-                            <option>Categories</option>                             
-                            <option value="all"><a href="./product.php">All Categories</a></option>                          
+                            <option>Catégories</option>                             
+                            <option value="all"><a href="./product.php">Tous les catégories</a></option>                          
                             <?php
                                 $cat = new categorie($db_config)  ;
                                 $req = $cat->get_all_cat();
@@ -208,17 +258,17 @@
                     <div class="col-lg-7 col-md-7">
                         <div class="advanced-search">
                             <form action="#" class="input-group">
-                                <input id="search-input" type="text" onkeyup="search()" placeholder="Search">
+                                <input id="search-input" type="text" onkeyup="search()" placeholder="Chercher">
                                 <button type="button"><i class="ti-search"></i></button>
                             </form>
                         </div>
                     </div>
                     <div class="col-lg-3 col-md-3">
-                        <ul type="none" style="padding-top:1px">
+                        <ul type="none">
                             <li class="heart-icon">                             
                                     <button type="submit" class="site-btn" data-toggle="modal"
                                      data-target=".bd-example-modal-lg" style="height:50px;">
-                                        Add New Product</button>
+                                     Ajouter produit</button>
                             </li>
                         </ul>
                     </div>
@@ -234,7 +284,7 @@
         <div class="modal-dialog modal-lg modal-dialog-centered" id="modal_id">
             <div class="modal-content">
                 <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLongTitle">Add New Product</h5>
+                <h5 class="modal-title" id="exampleModalLongTitle">Ajouter un nouveau produit</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
@@ -246,17 +296,13 @@
                                         <form name="product" action="product.php" method="post" enctype="multipart/form-data">
                                             <div class="row">
                                                 <div class="col-lg-12 form-group" >
-                                                    <input id="input_name" class="form-control" type="text" placeholder="Name" name="name" >
+                                                    <input id="input_name" class="form-control" type="text" placeholder="Nom produit" name="name" >
                                                     <p id="name" style="margin-bottom: 0px"></p>
-                                                    <?php
-                                                        if(isset($erName)){
-                                                            echo '<p>'.$erName.'</p>';
-                                                        }
-                                                    ?> 
+                                                     
                                                 </div>
                                                 <div class="col-lg-12 form-group">
                                                     <select id="input_cat" class="form-control"  name="categorie" >
-                                                        <option value="" disabled selected hidden>Choose Category...</option>
+                                                        <option value="" disabled selected hidden>Choisissez la catégorie...</option>
                                                         <?php
                                                             $cat = new categorie($db_config)  ;
                                                             $req = $cat->get_all_cat();
@@ -266,35 +312,29 @@
                                                         ?>
                                                     </select> 
                                                     <p id="cat" style="margin-bottom: 0px"></p>
-                                                    <?php
-                                                        if(isset($erCateg)){
-                                                            echo '<p>'.$erCateg.'</p>';
-                                                        }
-                                                    ?>                                     
+                                                                                         
+                                                </div>
+                                                <div class="col-lg-12 form-group">
+                                                    <select id="input_subcat" class="form-control"  name="subcategorie" >
+                                                        <option value="" disabled selected hidden>Choisissez la sous catégorie...</option>
+                                                     </select> 
+                                                    <p id="subcat" style="margin-bottom: 0px"></p>
                                                 </div>
                                                 <div class="col-lg-12 form-group" >
                                                     <textarea id="input_desc" class="form-control" placeholder="description" name="description" ></textarea>
                                                     <p id="desc" style="margin-bottom: 0px"></p>
-                                                    <?php
-                                                        if(isset($erDescription)){
-                                                            echo '<p>'.$erDescription.'</p>';
-                                                        }
-                                                    ?> 
+                                                     
                                                 </div>
                                                 <div class="col-lg-12 form-group" >
-                                                    <input id="input_price" class="form-control" type="text" placeholder="Price" name="price" >
+                                                    <input id="input_price" class="form-control" type="text" placeholder="Prix" name="price" >
                                                     <p id="price" style="margin-bottom: 0px"></p>
-                                                    <?php
-                                                        if(isset($erPrice)){
-                                                            echo '<p>'.$erPrice.'</p>';
-                                                        }
-                                                    ?> 
+                                                     
                                                 </div>
                                                 <div class="col-lg-12 input-group" >
                                                     <div class="custom-file">
                                                     <input id="input_img" type="file"  class="custom-file-input" id="image" name="image" 
                                                     accept="image/x-png,image/jpg,image/jpeg">
-                                                    <label class="custom-file-label" for="input_img">Upload image</label>                                           
+                                                    <label class="custom-file-label" for="input_img">Télécharger image</label>                                           
                                                     </div> 
                                                                                             
                                                 </div>
@@ -308,7 +348,7 @@
                                                 </div>
                                                 <div class="pt-3 col-lg-12 form-group">
                                                     <br>
-                                                    <button type="submit" class="site-btn" name="add" id="myBtn">Add Product</button>
+                                                    <button type="submit" class="site-btn" name="add" id="myBtn">Ajouter produit</button>
                                                         
                                                 </div>
                                             </div>
@@ -328,7 +368,7 @@
         <div class="modal-dialog modal-lg modal-dialog-centered" id="update_modal_id">
             <div class="modal-content">
                 <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLongTitle">Update Product</h5>
+                <h5 class="modal-title" id="exampleModalLongTitle">Mettre à jour le produit</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
@@ -340,7 +380,7 @@
                                         <form name="product-update" action="product.php" method="post" enctype="multipart/form-data">
                                             <div class="row">
                                                 <div class="col-lg-12 form-group" >
-                                                    <input id="update_input_name" class="form-control" type="text" placeholder="Name" name="name" >    
+                                                    <input id="update_input_name" class="form-control" type="text" placeholder="Nom" name="name" >    
                                                     <input id="update_id" class="form-control" type="hidden" placeholder="Name" name="id" value="">
                                                     <p id="name" style="margin-bottom: 0px"></p>
                                                     <?php
@@ -351,7 +391,7 @@
                                                 </div>
                                                 <div class="col-lg-12 form-group">
                                                     <select id="update_input_cat" class="form-control"  name="categorie" >
-                                                        <option value="" disabled selected hidden>Choose Category...</option>
+                                                        <option value="" disabled selected hidden>Choisissez la catégorie...</option>
                                                         <?php
                                                             $cat = new categorie($db_config)  ;
                                                             $req = $cat->get_all_cat();
@@ -367,8 +407,20 @@
                                                         }
                                                     ?>                                     
                                                 </div>
+                                                <div class="col-lg-12 form-group">
+                                                    <select id="update_input_subcat" class="form-control"  name="subcategorie" >
+                                                        <option value="" disabled selected hidden>Choisissez la sous-catégorie...</option>
+                                                       
+                                                    </select> 
+                                                    <p id="update_subcat" style="margin-bottom: 0px"></p>
+                                                    <?php
+                                                        if(isset($ersubCateg)){
+                                                            echo '<p>'.$ersubCateg.'</p>';
+                                                        }
+                                                    ?>                                     
+                                                </div>
                                                 <div class="col-lg-12 form-group" >
-                                                    <input id="update_input_price" class="form-control" type="text" placeholder="Price" name="price" > 
+                                                    <input id="update_input_price" class="form-control" type="text" placeholder="Prix" name="price" > 
                                                     <p id="name" style="margin-bottom: 0px"></p>
                                                     <?php
                                                         if(isset($erPrice)){
@@ -386,13 +438,13 @@
                                                     ?> 
                                                 </div>
                                                 <div class="col-lg-12 form-group" >
-                                                    <p class="mb-2">Actual Image</p>
+                                                    <p class="mb-2">Image</p>
                                                     <img style="max-width: 200px" id="old_img" src="" alt="">
                                                 </div>
                                                 <div class="col-lg-12 input-group" >
                                                     <div class="custom-file">
                                                     <input id="update_input_img" type="file"  class="custom-file-input" id="update_image" name="image" accept="image/x-png,image/jpg,image/jpeg">
-                                                    <label class="custom-file-label" for="update_input_img">Change image</label>                                           
+                                                    <label class="custom-file-label" for="update_input_img">Changer image</label>                                           
                                                     </div> 
                                                                                             
                                                 </div>
@@ -406,7 +458,7 @@
                                                 </div>
                                                 <div class="pt-3 col-lg-12 form-group">
                                                     <br>
-                                                    <button type="submit" class="site-btn" name="update" id="update_myBtn">Update Product</button>
+                                                    <button type="submit" class="site-btn" name="update" id="update_myBtn">Modifier</button>
                                                         
                                                 </div>
                                             </div>
@@ -425,7 +477,7 @@
         <div class="modal-dialog modal-lg modal-dialog-centered" id="update-category-modal-id">
             <div class="modal-content">
                 <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLongTitle">Update Category</h5>
+                <h5 class="modal-title" id="exampleModalLongTitle">Mettre à jour la catégorie</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
@@ -437,7 +489,7 @@
                                         <form name="upcat" action="product.php" method="post" enctype="multipart/form-data">
                                             <div class="row">
                                                 <div class="col-lg-12 form-group" >
-                                                    <input id="update_name" class="form-control" type="text" placeholder="Name" name="name" >    
+                                                    <input id="update_name" class="form-control" type="text" placeholder="Nom" name="name" >    
                                                     <input id="up_cat_id" class="form-control" type="hidden" placeholder="Name" name="id" value="">
                                                     <p id="name" style="margin-bottom: 0px"></p>
                                                     <?php
@@ -448,7 +500,73 @@
                                                 </div>
                                                 <div class="pt-3 col-lg-12 form-group">
                                                     <br>
-                                                    <button type="submit" class="site-btn" name="update_cat" id="update_cat">Update Category</button>                                                      
+                                                    <button type="submit" class="site-btn" name="update_cat" id="update_cat">Modifier</button>                                                      
+                                                </div>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                </div>
+            
+            </div>
+        </div>
+    </div> 
+    <!-- show sub-category modal -->
+    <div class="modal fade show-sous-category-modal-lg" tabindex="-1" role="dialog" id="show-sous-category-modal-id"  
+    aria-labelledby="myLargeModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg modal-dialog-centered" id="show-sous-category-modal-id">
+            <div class="modal-content">
+                <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLongTitle">Voir sous catégories</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+                </div>
+                <div class="modal-body">
+                    <div class="fetched-data"></div>  <!-- Here Will show the Data -->
+                </div>
+            </div>
+        </div>
+    </div> 
+    <!-- add sub-category modal -->
+    <div class="modal fade add-sub-category-modal-lg" tabindex="-1" role="dialog" id="add-sub-category-modal-id"  
+    aria-labelledby="myLargeModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg modal-dialog-centered" id="add-sub-category-modal-id">
+            <div class="modal-content">
+                <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLongTitle">Ajouter une sous-catégorie</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+                </div>
+                <div class="modal-body">
+                        <div class="col-lg-10 offset-lg-1">
+                                <div class="contact-form">
+                                    <div class="leave-comment">                             
+                                        <form name="addSubCategory" action="product.php" method="post" enctype="multipart/form-data">
+                                            <div class="row">
+                                                <div class="col-lg-12 form-group" >
+                                                    <input id="subcat_name" class="form-control" 
+                                                    type="text" placeholder="Nom" name="name" >
+                                                    <p id="name" style="margin-bottom: 0px"></p>
+                                                </div>
+                                                <div class="col-lg-12 form-group">
+                                                    <select id="subcat_cat" class="form-control"  name="categorie" >
+                                                        <option value="" disabled selected hidden>Choisissez la catégorie...</option>
+                                                        <?php
+                                                            $cat = new categorie($db_config)  ;
+                                                            $req = $cat->get_all_cat();
+                                                            while ($ligne = $req->fetch()) {
+                                                                echo '<option value="'.$ligne['id'].'">'.$ligne['nom'].'</option>';
+                                                            }
+                                                        ?>
+                                                    </select> 
+                                                    <p id="categoriex" style="margin-bottom: 0px"></p>
+                                                </div>
+                                                <div class="pt-3 col-lg-12 form-group">
+                                                    <br>
+                                                    <button type="submit" class="site-btn" name="add_sub_category" id="add_sub_category">Add Sub-Category</button>                                                      
                                                 </div>
                                             </div>
                                         </form>
@@ -468,9 +586,9 @@
                 <div class="col-lg-3 col-md-6 col-sm-8 order-2 order-lg-1">
                     <div class="blog-sidebar">
                         <div class="search-form">
-                            <h4>Add New Category</h4>
+                            <h4>Ajouter une catégorie</h4>
                             <form action="product.php" method="post">
-                                <input type="text" placeholder="Name" name="name_categ" autocomplete="off">
+                                <input type="text" placeholder="Nom catégorie" name="name_categ" autocomplete="off">
                                 <?php
                                     if(isset($erNameCateg)){
                                         echo '<p>'.$erNameCateg.'</p>';
@@ -479,8 +597,19 @@
                                 <button type="submit" name="add_categ" ><i class="ti-plus"></i></input>
                             </form>
                         </div>
+                        <div class="search-form">
+                            <h4>Ajouter une sous-catégorie</h4>
+                            <ul type="none" style="padding-top:1px">
+                                <li class="heart-icon">                             
+                                        <button type="submit" class="site-btn" 
+                                        data-toggle="modal" data-target=".add-sub-category-modal-lg"
+                                        style="height:65px;width:262px">
+                                        Ajouter une sous-catégorie</button>
+                                </li>
+                            </ul>
+                        </div>
                         <div class="blog-catagory">
-                            <h4>Categories</h4>
+                            <h4>Catégories</h4>
                             <ul>
                             <?php                              
                                 $req = $cat->get_all_cat();
@@ -488,11 +617,17 @@
                                 while ($ligne = $req->fetch()) {
                                     echo'<tr> <td width="80%">'.$ligne['nom'].'</td>';
                                     echo '<td style="visibility:hidden;">'.$ligne['id'].'</td>';
-                                    echo'<td width="10%"><a data-toggle="modal" data-target=".update-category-modal-lg" 
+                                    echo'<td width="10%" style="cursor: pointer;" data-toggle="tooltip" data-placement="top" title="Modifier">
+                                    <a data-toggle="modal" data-target=".update-category-modal-lg" 
                                     class="color action-btn updateCateg href="#" ><i class="color ti-pencil-alt">
-                                    </i></a></td>';                               
-                                    echo '<td width="1%"><a data-toggle="tooltip" data-placement="top" title="Delete"
-                                    class="color action-btn" href="javascript:;" onclick="deleteCat('.$ligne['id'].')"><i class="color ti-close"></i></a></td></tr>';
+                                    </i></a></td>';     
+                                    echo'<td width="10%" style="cursor: pointer;" data-toggle="tooltip" data-placement="top" title="Voir sous catégories">
+                                    <a data-toggle="modal" data-target=".show-sous-category-modal-lg" 
+                                    data-id="'.$ligne['id'].'"
+                                    class="color action-btn showSousCateg href="#" ><i class="color ti-eye">
+                                    </i></a></td>';                          
+                                    echo '<td width="1%" data-toggle="tooltip" data-placement="top" title="Supprimer">
+                                    <a class="color action-btn" href="javascript:;" onclick="deleteCat('.$ligne['id'].')"><i class="color ti-close"></i></a></td></tr>';
                                 }
                                 echo'</table>';
                             ?> 
@@ -507,12 +642,12 @@
                             <thead>
                                 <tr>
                                     <th style="text-align:left;padding-left:25px;">Image</th>
-                                    <th style="text-align:left;">Product Name</th>
-                                    <th style="text-align:left;">Price</th>
-                                    <th style="text-align:left;">Category</th>
-                                    <th class="p-name" style="text-align:left;">Description</th>                                  
-                                    <th style="text-align:left;">Actions</th>
-                                    
+                                    <th style="text-align:left;padding-left:25px;">Nom produit</th>
+                                    <th style="text-align:left;padding-left:25px;">Prix</th>
+                                    <th style="text-align:left;padding-left:25px;">Catégorie</th>
+                                    <th style="text-align:left;padding-left:25px;">Sous-catégorie</th>
+                                    <th class="p-name" style="text-align:left;padding-left:25px;">Description</th>                                  
+                                    <th style="text-align:left;padding-left:25px;">Actions</th>
                                 </tr>
                             </thead>
                             <tbody>                              
@@ -527,17 +662,23 @@
                                         while ($ligne = $req->fetch()) 
                                         {
                                             echo'<tr>';
-                                            echo'<td class="cart-pic first-row"><img data="'.$ligne['id'].'" class="imgp" src="../images/'.$ligne['url_image'].'" alt=""></td>';
-                                            echo'<td class="qua-col first-row"><h5  style="text-align:left">'.$ligne['nom'].'</h5></td>';
-                                            echo'<td class="p-price first-row"><span>'.$ligne['prix'].'</span></td>';
-                                            echo'<td class="p-price first-row"><span';
+                                            echo'<td class="cart-pic first-row" style="padding-left:25px;"><img data="'.$ligne['id'].'" class="imgp" src="../images/'.$ligne['url_image'].'" alt=""></td>';
+                                            echo'<td class="qua-col first-row" style="padding-left:25px;"><h5  style="text-align:left">'.$ligne['nom'].'</h5></td>';
+                                            echo'<td class="p-price first-row" style="padding-left:25px;"><span>'.$ligne['prix'].'</span></td>';
+                                            echo'<td class="p-price first-row" style="padding-left:25px;"><span';
                                             $req2 = $db_config->prepare("SELECT nom, id FROM categorie WHERE id=:uid  ");
                                             $req2->execute(array(':uid'=>$ligne['id_categ']));
                                             //On récupère le résultat
                                             $ligne2=$req2->fetch(PDO::FETCH_ASSOC);
                                             echo ' data="'.$ligne2['id'].'">' . $ligne2['nom'].'</span></td>';
-                                            echo'<td class="cart-title first-row"><p>'.$ligne['description'].'</p></td>';
-                                            echo'<td class="total-price first-row"><a data-toggle="modal" data-target=".update-modal-lg" 
+                                            echo'<td class="p-price first-row" style="padding-left:25px;"><span';
+                                            $req3 = $db_config->prepare("SELECT name, id FROM souscategorie WHERE id=:uid  ");
+                                            $req3->execute(array(':uid'=>$ligne['id_sous_categ']));
+                                            //On récupère le résultat
+                                            $ligne3=$req3->fetch(PDO::FETCH_ASSOC);
+                                            echo ' data="'.$ligne3['id'].'">' . $ligne3['name'].'</span></td>';
+                                            echo'<td class="cart-title first-row" style="padding-left:25px;"><p>'.$ligne['description'].'</p></td>';
+                                            echo'<td class="total-price first-row" style="padding-left:25px;"><a data-toggle="modal" data-target=".update-modal-lg" 
                                             class="color action-btn updateBtn" href="#" 
                                             onclick="updateInputs('.$ligne['id'].')"><i class="ti-pencil-alt color"></i></a>';
                                             echo'&nbsp;&nbsp;&nbsp;<a data-toggle="tooltip" data-placement="top" title="Delete"
@@ -564,8 +705,8 @@
                         <div style="float: center;font-size: 16px;color: #b2b2b2;">
                             <!-- Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0. -->
 Copyright &copy;<script>document.write(new Date().getFullYear());</script> All rights reserved
- | This template is made with <i class="fa fa-heart-o" aria-hidden="true"></i>
- by <a href="https://colorlib.com" target="_blank">Colorlib</a>
+ | This project is made with <i class="fa fa-heart-o" aria-hidden="true"></i>
+ by <a href="https://colorlib.com" target="_blank">OSSEC</a>
 <!-- Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0. -->
                         </div>
                     </div>
@@ -625,16 +766,41 @@ Copyright &copy;<script>document.write(new Date().getFullYear());</script> All r
             var productname = row.children()[1].innerText;
             var price = row.children()[2].innerText;
             var categoryId = row.children()[3].childNodes[0].getAttribute('data');
-            var description = row.children()[4].innerText;
+            var subcategoryId = row.children()[4].childNodes[0].getAttribute('data');
+            var description = row.children()[5].innerText;
         
 
             // select elements to update
             $("#update_input_name").val(productname);
             $("#update_input_cat").val(categoryId);
+            $("#update_input_subcat").val(subcategoryId);
             $("#update_input_desc").val(description);
             $("#update_input_price").val(price);
             $("#old_img").attr('src', image);
             $("#update_id").val(id_product);
+            $.ajax({
+                type:'POST',
+                url:'../back/getSubCateg.php',
+                data:'categ='+categoryId,
+                success:function(html){
+                    $('#update_input_subcat').html(html);
+                }
+            });  
+        });
+        $('#update_input_cat').on('change', function(){
+            var categ = $(this).val();
+            if(categ){
+                $.ajax({
+                    type:'POST',
+                    url:'../back/getSubCateg.php',
+                    data:'categ='+categ,
+                    success:function(html){
+                        $('#update_input_subcat').html(html);
+                    }
+                }); 
+            }else{
+                $('#update_input_subcat').html('<option value="" disabled selected hidden>Choisissez la catégorie...</option>'); 
+            }
         });
 
         // Update Category
@@ -744,6 +910,53 @@ Copyright &copy;<script>document.write(new Date().getFullYear());</script> All r
             if(id=="all")
                 window.location.href = "product.php";
         }
+
+        $(document).ready(function(){
+            $('.showSousCateg').on('click', function (e) {
+                //var rowid = $(e.relatedTarget).data('id');
+                var rowid = $(this).data('id');
+                console.log(rowid);
+                $.ajax({
+                    type : 'post',
+                    url : '../back/fetch_subCategory.php', //Here you will fetch records 
+                    data : 'rowid='+ rowid, //Pass $id
+                    success : function(data){
+                    $('.fetched-data').html(data);//Show fetched data from database
+                    }
+                });
+            });
+        });
+        $('#input_cat').on('change', function(){
+            var categ = $(this).val();
+            if(categ){
+                $.ajax({
+                    type:'POST',
+                    url:'../back/getSubCateg.php',
+                    data:'categ='+categ,
+                    success:function(html){
+                        $('#input_subcat').html(html);
+                    }
+                }); 
+            }else{
+                $('#input_subcat').html('<option value="" disabled selected hidden>Choisissez la catégorie...</option>'); 
+            }
+        });
+        $('#update_subcat').on('change', function(){
+            var categ = $(this).val();
+            if(categ){
+                $.ajax({
+                    type:'POST',
+                    url:'../back/getSubCateg.php',
+                    data:'categ='+categ,
+                    success:function(html){
+                        $('#update_subcat').html(html);
+                    }
+                }); 
+            }else{
+                $('#update_subcat').html('<option value="" disabled selected hidden>Choisissez la catégorie...</option>'); 
+            }
+        });
+        
         
     </script>
 </body>

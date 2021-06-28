@@ -5,6 +5,7 @@
 	require "../back/categorie.php" ;
 	require "../back/product.php" ;
 	require "../back/authentication.php" ;
+	require "../back/souscategorie.php";
 	
 	//Les paramètres de connexion
 	$DB_host = "localhost";

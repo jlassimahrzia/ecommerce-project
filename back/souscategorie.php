@@ -1,5 +1,5 @@
 <?php
-class categorie {
+class souscategorie {
 
 	private $db;
 
@@ -7,12 +7,12 @@ class categorie {
 		$this->db = $DB_con;
 	}
     
-    public function add($nom){  
+    public function add($nom,$idcat){  
         try
         {
-            $sql = "INSERT INTO categorie (nom) VALUES (:nom)";
+            $sql = "INSERT INTO souscategorie (name ,id_categorie) VALUES (:nom , :idcat)";
             $req = $this->db->prepare($sql);
-            $req->execute(array(":nom"=>$nom));
+            $req->execute(array(":nom"=>$nom ,":idcat"=>$idcat));
             return true ;
         }          
         catch(PDOException $e)
@@ -21,12 +21,12 @@ class categorie {
         }
     }
 
-    public function update($id,$nom){
+    public function update($id,$nom,$idcat){
         try
         {
-            $sql ="UPDATE categorie SET nom=:nom WHERE id=:id ";
+            $sql ="UPDATE souscategorie SET name=:nom ,id_categorie=:idcat WHERE id=:id ";
             $req = $this->db->prepare($sql);
-            $req->execute(array(":id"=>$id , ":nom"=>$nom));
+            $req->execute(array(":id"=>$id , ":nom"=>$nom,":idcat"=>$idcat));
             return true ;
         }          
         catch(PDOException $e)
@@ -38,13 +38,10 @@ class categorie {
     public function delete($id){
         try
         {
-            $sql ="DELETE FROM produit WHERE id_categ=:id";
+            $sql ="DELETE FROM produit WHERE id_sous_categ=:id";
             $req = $this->db->prepare($sql);
             $req->execute(array(":id"=>$id));
-            $sql ="DELETE FROM souscategorie WHERE id_categorie=:id";
-            $req = $this->db->prepare($sql);
-            $req->execute(array(":id"=>$id));
-            $sql ="DELETE FROM categorie WHERE id=:id";
+            $sql ="DELETE FROM souscategorie WHERE id=:id";
             $req = $this->db->prepare($sql);
             $req->execute(array(":id"=>$id));
             return true ;
@@ -56,7 +53,7 @@ class categorie {
     }
 
     public function get_all_cat(){
-        $sql = 'SELECT * FROM categorie';
+        $sql = 'SELECT * FROM souscategorie';
         $req = $this->db->query($sql);
         return $req ;
     }
@@ -68,7 +65,7 @@ class categorie {
     public function get_cat_by_id($id){
         try
         {
-            $req = $this->db->prepare("SELECT nom FROM categorie WHERE id=:id");
+            $req = $this->db->prepare("SELECT nom FROM souscategorie WHERE id=:id");
             $req->execute(array(":id"=>$id));
             $ligne=$req->fetch(PDO::FETCH_ASSOC); 
             return $ligne['nom'];      

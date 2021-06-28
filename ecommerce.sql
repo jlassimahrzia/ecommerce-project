@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Hôte : 127.0.0.1
--- Généré le :  mar. 17 mars 2020 à 20:18
+-- Généré le :  lun. 28 juin 2021 à 15:54
 -- Version du serveur :  10.1.33-MariaDB
 -- Version de PHP :  7.2.6
 
@@ -39,7 +39,7 @@ CREATE TABLE `admin` (
 --
 
 INSERT INTO `admin` (`id`, `username`, `password`) VALUES
-(4, 'jlassimahrzia111@gmail.com', '$2y$10$lWBCEO/bjpVPuOGLMbxH4uClrw9Co4634NFbfA86jhsyifCsZNNRi');
+(4, 'admin@gmail.com', '$2y$10$EsLyWz/B4XeWsEJGF4RCquWw1LH0i2P.IYdIdxlBs7fzkHUiViA.S');
 
 -- --------------------------------------------------------
 
@@ -57,8 +57,9 @@ CREATE TABLE `categorie` (
 --
 
 INSERT INTO `categorie` (`id`, `nom`) VALUES
-(33, 'catégorie1'),
-(35, 'catégorie2');
+(37, 'category 2'),
+(38, 'category 3'),
+(39, 'category 1');
 
 -- --------------------------------------------------------
 
@@ -72,21 +73,45 @@ CREATE TABLE `produit` (
   `description` text NOT NULL,
   `url_image` varchar(500) NOT NULL,
   `prix` double NOT NULL DEFAULT '0',
-  `id_categ` int(11) NOT NULL
+  `id_categ` int(11) NOT NULL,
+  `id_sous_categ` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 --
 -- Déchargement des données de la table `produit`
 --
 
-INSERT INTO `produit` (`id`, `nom`, `description`, `url_image`, `prix`, `id_categ`) VALUES
-(32, 'PARODONTAX', 'is a toothpaste that is clinically proven to help reduce bleeding gums. When used twice daily, it significantly reduces plaque and bleeding gums after 12 weeks.', '5e7109bd7aaa5_1584466365.png', 50, 33),
-(33, 'nova dent', 'Teeth whitening is one of the safest and conservative forms of cosmetic dental treatment', '5e7109ad621c1_1584466349.jpg', 12.5, 33),
-(34, 'RESINE DENTAIRE BLANCHE', 'Résine dentaire blanche pour réparation des dents artificielles des prothèses dentaires pour resceller des facettes dentaires des dents prothètiques', '5e5057f9be1d7_1582323705.jpg', 40.6, 35),
-(35, 'blanchiment des dents', 'Les produits de blanchiment des dents vendus sans ordonnance peuvent constituer le moyen le moins cher pour obtenir un sourire hollywoodien et peuvent être très efficaces', '5e5058bc7d008_1582323900.jpg', 20, 35),
-(36, 'BRAND', 'Blanchiment des annonces de pâte dentifrice Modèle de dent et design d\'emballage de produit', '5e505992b07a7_1582324114.jpg', 8000, 35),
-(37, 'Poussée dentaire, 30 x 1 ml', 'Tout médicament ou produit de santé naturel peut causer des effets indésirables sérieux ou des interactions avec d’autres médicaments.', '5e505a127f023_1582324242.png', 9000, 35),
-(38, 'produit', 'description', '5e71069d18717_1584465565.jpg', 10.56, 33);
+INSERT INTO `produit` (`id`, `nom`, `description`, `url_image`, `prix`, `id_categ`, `id_sous_categ`) VALUES
+(6, 'PARODONTAX', 'is a toothpaste that is clinically proven to help reduce bleeding gums. When used twice daily, it significantly reduces plaque and bleeding gums after 12 weeks.', '60d9d32a77a72_1624888106.jpg', 400, 39, 8),
+(7, 'nova dent', 'Teeth whitening is one of the safest and conservative forms of cosmetic dental treatment', '60d9d374421ba_1624888180.jpg', 400, 39, 9),
+(8, 'RESINE DENTAIRE BLANCHE', 'Résine dentaire blanche pour réparation des dents artificielles des prothèses dentaires pour resceller des facettes dentaires des dents prothètiques', '60d9d39e8911f_1624888222.jpg', 50, 37, 3),
+(9, 'blanchiment des dents', 'Les produits de blanchiment des dents vendus sans ordonnance peuvent constituer le moyen le moins cher pour obtenir un sourire hollywoodien et peuvent être très efficaces', '60d9d3d2530f0_1624888274.jpg', 40, 37, 4),
+(10, 'BRAND', 'Blanchiment des annonces de pâte dentifrice Modèle de dent et design d\\\'emballage de produit', '60d9d3fb6ff69_1624888315.jpg', 50, 37, 4),
+(11, 'Poussée dentaire, 30 x 1 ml', 'Tout médicament ou produit de santé naturel peut causer des effets indésirables sérieux ou des interactions avec d’autres médicaments.', '60d9d41ddc1b3_1624888349.png', 50, 38, 5);
+
+-- --------------------------------------------------------
+
+--
+-- Structure de la table `souscategorie`
+--
+
+CREATE TABLE `souscategorie` (
+  `id` int(11) NOT NULL,
+  `name` varchar(200) NOT NULL,
+  `id_categorie` int(11) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+--
+-- Déchargement des données de la table `souscategorie`
+--
+
+INSERT INTO `souscategorie` (`id`, `name`, `id_categorie`) VALUES
+(3, 'category 2.1', 37),
+(4, 'category 2.2', 37),
+(5, 'category 3.1', 38),
+(6, 'category 3.2', 38),
+(8, 'category 1.1', 39),
+(9, 'category 1.2', 39);
 
 --
 -- Index pour les tables déchargées
@@ -110,7 +135,15 @@ ALTER TABLE `categorie`
 --
 ALTER TABLE `produit`
   ADD PRIMARY KEY (`id`),
-  ADD KEY `id_categ` (`id_categ`);
+  ADD KEY `id_categ` (`id_categ`),
+  ADD KEY `fk_produit_souscategorie` (`id_sous_categ`);
+
+--
+-- Index pour la table `souscategorie`
+--
+ALTER TABLE `souscategorie`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `Fk_categorie_sousCategorie` (`id_categorie`);
 
 --
 -- AUTO_INCREMENT pour les tables déchargées
@@ -126,13 +159,19 @@ ALTER TABLE `admin`
 -- AUTO_INCREMENT pour la table `categorie`
 --
 ALTER TABLE `categorie`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=37;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=40;
 
 --
 -- AUTO_INCREMENT pour la table `produit`
 --
 ALTER TABLE `produit`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=40;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
+
+--
+-- AUTO_INCREMENT pour la table `souscategorie`
+--
+ALTER TABLE `souscategorie`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
 
 --
 -- Contraintes pour les tables déchargées
@@ -142,7 +181,14 @@ ALTER TABLE `produit`
 -- Contraintes pour la table `produit`
 --
 ALTER TABLE `produit`
+  ADD CONSTRAINT `fk_produit_souscategorie` FOREIGN KEY (`id_sous_categ`) REFERENCES `souscategorie` (`id`),
   ADD CONSTRAINT `produit_ibfk_1` FOREIGN KEY (`id_categ`) REFERENCES `categorie` (`id`);
+
+--
+-- Contraintes pour la table `souscategorie`
+--
+ALTER TABLE `souscategorie`
+  ADD CONSTRAINT `Fk_categorie_sousCategorie` FOREIGN KEY (`id_categorie`) REFERENCES `categorie` (`id`);
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
