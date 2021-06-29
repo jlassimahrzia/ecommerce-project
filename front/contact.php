@@ -94,7 +94,7 @@
                     </div>
                 </div>
                 <div class="ht-right ">
-                    <a href="login.php" class="trn login-panel"><i class="fa fa-user"></i>Login</a>
+                    <!-- <a href="login.php" class="trn login-panel"><i class="fa fa-user"></i>Login</a> -->
                      <div class="lan-selector">
                         <a class="lang_selector trn" href="#" data-value="en" ><img src="images/uk.png" alt="" class="flag">EN</a>
                         <a class="lang_selector trn" href="#" data-value="fr" ><img src="images/france.png" alt="" class="flag">FR</a>                   
@@ -114,24 +114,23 @@
                 <div class="nav-depart">
                 <div class="depart-btn">
                         <i class="ti-menu"></i>
-                        <span class="trn">All Categories</span>
-                        <ul class="depart-hover">
-                            <li class="active"><a href="shop.php" class="trn">All Categories</a></li>
+                        <span class="trn">Products</span>
+                        <ul class="depart-hover" style="overflow: auto;max-height:500px;width:auto; display: grid !important;grid-template-columns: repeat(4, 1fr);grid-gap: 1em;">
                             <?php
                                 $cat = new categorie($db_config)  ;
                                 $req = $cat->get_all_cat();
                                 while ($ligne = $req->fetch()) {
                                     echo '<li><a href="shop.php?idcateg='.$ligne['id'].'">'.$ligne['nom'].'</a></li>';
                                 }
+                              
                             ?> 
                         </ul>
                     </div>
                 </div>
                 <nav class="nav-menu mobile-menu">
                     <ul>
-                        <li><a href="index.php"  class="trn">Home</a></li>
-                        <li><a href="shop.php"  class="trn">Products</a></li>
-                        <li  class="active"><a href="contact.php"  class="trn">Contact</a></li>
+                        <li class="active"><a href="index.php" class="trn">Home</a></li>
+                        <li><a href="contact.php"  class="trn">Contact</a></li>
                     </ul>
                 </nav>
                 <div id="mobile-menu-wrap"></div>
@@ -285,22 +284,8 @@
                         <h5>Information</h5>
                         <ul>
                             <li><a href="index.php" class="trn">Home</a></li>
-                            <li><a href="shop.php" class="trn">Products</a></li>
+                            <li><a href="#" class="trn">Products</a></li>
                             <li><a href="contact.php" class="trn">Contact</a></li>
-                        </ul>
-                    </div>
-                </div>
-                <div class="col-lg-2">
-                    <div class="footer-widget">
-                        <h5>Categories</h5>
-                        <ul>
-                            <?php
-                                $cat = new categorie($db_config)  ;
-                                $req = $cat->get_all_cat();
-                                while ($ligne = $req->fetch()) {
-                                    echo '<li><a href="shop.php?idcateg='.$ligne['id'].'">'.$ligne['nom'].'</a></li>';
-                                }
-                            ?> 
                         </ul>
                     </div>
                 </div>
@@ -320,7 +305,7 @@
                     <div class="col-lg-12" style="text-align:center;">
                         <div class="copyright-text" >
                             <!-- Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0. -->
-Copyright &copy;<script>document.write(new Date().getFullYear());</script> All rights reserved | This template is made with <i class="fa fa-heart-o" aria-hidden="true"></i> by <a href="https://colorlib.com" target="_blank">Colorlib</a>
+Copyright &copy;<script>document.write(new Date().getFullYear());</script> All rights reserved | This website is made with <i class="fa fa-heart-o" aria-hidden="true"></i> by <a href="https://colorlib.com" target="_blank">OSSEC</a>
 <!-- Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0. -->
                         </div>
                        

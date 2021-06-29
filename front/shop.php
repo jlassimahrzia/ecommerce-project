@@ -71,7 +71,7 @@
                     </div>
                 </div>
                 <div class="ht-right ">
-                    <a href="login.php" class="trn login-panel"><i class="fa fa-user"></i>Login</a>
+                    <!-- <a href="login.php" class="trn login-panel"><i class="fa fa-user"></i>Login</a> -->
                      <div class="lan-selector">
                         <a class="lang_selector trn" href="#" data-value="en" ><img src="images/uk.png" alt="" class="flag">EN</a>
                         <a class="lang_selector trn" href="#" data-value="fr" ><img src="images/france.png" alt="" class="flag">FR</a>                   
@@ -91,23 +91,22 @@
                 <div class="nav-depart">
                 <div class="depart-btn">
                         <i class="ti-menu"></i>
-                        <span class="trn">All Categories</span>
-                        <ul class="depart-hover">
-                            <li class="active"><a href="shop.php" class="trn">All Categories</a></li>
+                        <span class="trn">Products</span>
+                        <ul class="depart-hover" style="overflow: auto;max-height:500px;width:auto; display: grid !important;grid-template-columns: repeat(4, 1fr);grid-gap: 1em;">
                             <?php
                                 $cat = new categorie($db_config)  ;
                                 $req = $cat->get_all_cat();
                                 while ($ligne = $req->fetch()) {
                                     echo '<li><a href="shop.php?idcateg='.$ligne['id'].'">'.$ligne['nom'].'</a></li>';
                                 }
+                              
                             ?> 
                         </ul>
                     </div>
                 </div>
                 <nav class="nav-menu mobile-menu">
                     <ul>
-                        <li ><a href="index.php"  class="trn">Home</a></li>
-                        <li class="active"><a href="shop.php"  class="trn">Products</a></li>
+                        <li class="active"><a href="index.php" class="trn">Home</a></li>
                         <li><a href="contact.php"  class="trn">Contact</a></li>
                     </ul>
                 </nav>
@@ -122,8 +121,17 @@
             <div class="row">
                 <div class="col-lg-12">
                     <div class="breadcrumb-text">
-                        <a href="#" class="trn"><i class="fa fa-home"></i> Home</a>
-                        <span  class="trn">Products</span>
+                        <a href="#" class="trn"><i class="fa fa-home"></i> Products</a>
+                        <span  class="trn">
+                            <?php
+                                if(isset($_GET['idcateg'])){
+                                    $req = $db_config->prepare("SELECT * FROM categorie WHERE id=:uid  ");
+                                    $req->execute(array(':uid'=>$_GET['idcateg']));
+                                    $ligne=$req->fetch(PDO::FETCH_ASSOC);
+                                    echo $ligne['nom'];       
+                                }
+                            ?>
+                        </span>
                     </div>
                 </div>
             </div>
@@ -165,13 +173,16 @@
                 
                 <div class="col-lg-3 col-md-6 col-sm-8 order-2 order-lg-1 produts-sidebar-filter" data-aos="fade-up">
                     <div class="filter-widget">
-                        <h4 class="fw-title">Categories</h4>
+                        <h4 class="fw-title">Sub-Categories</h4>
                         <ul class="filter-catagories">
                         <?php
-                            $cat = new categorie($db_config)  ;
-                            $req = $cat->get_all_cat();
-                            while ($ligne = $req->fetch()) {
-                                echo '<li><a>'.$ligne['nom'].'</a></li>';
+                            echo '<li><a href="shop.php?idcateg='.$_GET['idcateg'].'">All sub-categories</a></li>';
+                            if(isset($_GET['idcateg'])){
+                                $req = $db_config->prepare("SELECT * FROM souscategorie WHERE id_categorie=:uid  ");
+                                $req->execute(array(':uid'=>$_GET['idcateg'])); 
+                                while ($ligne = $req->fetch()) {
+                                    echo '<li><a href="shop.php?idcateg='.$_GET['idcateg'].'&idsouscateg='.$ligne['id'].'">'.$ligne['name'].'</a></li>';
+                                }                             
                             }
                         ?> 
                         </ul>
@@ -182,29 +193,31 @@
                         <div class="row">
                             <div class="col-lg-7 col-md-7" data-aos="fade-up">
                                 <div class="select-option">
-                                    <select class="sorting" onchange="selectCategory(value);">
-                                        <option value="all" ><a href="./product.php" class="trn">All Categories</a></option>                          
-                                        <?php
-                                            $cat = new categorie($db_config)  ;
-                                            $req = $cat->get_all_cat();
-                                            while ($ligne = $req->fetch()) {
-                                                echo '<option value="'.$ligne['id'].'" ><a href="#">'.$ligne['nom'].'</a></option>';
-                                            }
+                                    <?php
+                                        echo '<select class="sorting" onchange="selectCategory(value,'.$_GET["idcateg"].');">';
+                                        echo    '<option value="all" ><a href="#" class="trn">All sub-Categories</a></option>  ';    
+                                                if(isset($_GET['idcateg'])){
+                                                    $req = $db_config->prepare("SELECT * FROM souscategorie WHERE id_categorie=:uid  ");
+                                                    $req->execute(array(':uid'=>$_GET['idcateg'])); 
+                                                    while ($ligne = $req->fetch()) {
+                                                        echo '<option value="'.$ligne['id'].'" ><a href="#">'.$ligne['name'].'</a></option>';
                                                 
-                                        ?> 
-                                    </select>                               
+                                                    }                             
+                                                }
+                                        echo '</select>'; 
+                                    ?>                              
                                 </div>
                             </div>
                             <div class="col-lg-5 col-md-5 text-right">
                                 <?php
-                                    if(isset($_GET['idcateg'])&&isset($_GET['idsouscateg'])){
+                                    if(isset($_GET['idcateg'])&&!isset($_GET['idsouscateg']))
+                                    {
                                         $req = $db_config->prepare("SELECT * FROM produit WHERE id_categ=:uid  ");
                                         $req->execute(array(':uid'=>$_GET['idcateg']));  
-                                        echo  "sous category".$_GET['idsouscateg'];                                   
                                     }
-                                    else {
-                                        $req = $db_config->prepare("SELECT * FROM produit ") ;
-                                        $req->execute();
+                                    else if(isset($_GET['idcateg'])&&isset($_GET['idsouscateg'])){
+                                        $req = $db_config->prepare("SELECT * FROM produit WHERE id_categ=:uid AND id_sous_categ=:idsubcat");
+                                        $req->execute(array(':uid'=>$_GET['idcateg'],':idsubcat'=>$_GET['idsouscateg']));
                                     }   
                                     $count = $req->rowCount();
                                     echo '<span class="trn">Show 01- 12 Of </span>'.$count.'<span class="trn"> Product</span>';
@@ -216,24 +229,26 @@
                     <div class="product-list" data-aos="fade-up">
                         <div class="row" id="example">
                             <?php
-                             if(isset($_GET['idcateg'])){
+                            if(isset($_GET['idcateg'])&&!isset($_GET['idsouscateg']))
+                            {
                                 $req = $db_config->prepare("SELECT * FROM produit WHERE id_categ=:uid  ");
-                                $req->execute(array(':uid'=>$_GET['idcateg']));                                          
+                                $req->execute(array(':uid'=>$_GET['idcateg']));   
                             }
-                            else {
-                                $req = $product->get_all_product()  ;
-                            }   
+                            else if(isset($_GET['idcateg'])&&isset($_GET['idsouscateg'])){
+                                $req = $db_config->prepare("SELECT * FROM produit WHERE id_categ=:uid AND id_sous_categ=:idsubcat");
+                                $req->execute(array(':uid'=>$_GET['idcateg'],':idsubcat'=>$_GET['idsouscateg']));
+                            }    
                             while ($ligne = $req->fetch()) 
                             {
                                 echo'<div class="col-lg-4 col-sm-6">
                                     <div class="product-item" data-aos="fade-up">
                                         <div class="pi-pic">
                                             <img src="../images/'.$ligne['url_image'].'" alt="" class="img">';
-                                $req2 = $db_config->prepare("SELECT nom, id FROM categorie WHERE id=:uid  ");
-                                $req2->execute(array(':uid'=>$ligne['id_categ']));
-                                //On récupère le résultat
-                                $ligne2=$req2->fetch(PDO::FETCH_ASSOC);
-                                            echo '<div class="sale pp-sale">'.$ligne2['nom'].'</div>
+                                            $req2 = $db_config->prepare("SELECT name, id FROM souscategorie WHERE id=:uid  ");
+                                            $req2->execute(array(':uid'=>$ligne['id_sous_categ']));
+                                            //On récupère le résultat
+                                            $ligne2=$req2->fetch(PDO::FETCH_ASSOC);
+                                            echo '<div class="sale pp-sale">'.$ligne2['name'].'</div>
                                             <div class="icon">
                                                 <i class="icon_heart_alt"></i>
                                             </div>
@@ -290,22 +305,8 @@
                         <h5>Information</h5>
                         <ul>
                             <li><a href="index.php" class="trn">Home</a></li>
-                            <li><a href="shop.php" class="trn">Products</a></li>
+                            <li><a href="#" class="trn">Products</a></li>
                             <li><a href="contact.php" class="trn">Contact</a></li>
-                        </ul>
-                    </div>
-                </div>
-                <div class="col-lg-2">
-                    <div class="footer-widget">
-                        <h5>Categories</h5>
-                        <ul>
-                            <?php
-                                $cat = new categorie($db_config)  ;
-                                $req = $cat->get_all_cat();
-                                while ($ligne = $req->fetch()) {
-                                    echo '<li><a href="shop.php?idcateg='.$ligne['id'].'">'.$ligne['nom'].'</a></li>';
-                                }
-                            ?> 
                         </ul>
                     </div>
                 </div>
@@ -325,7 +326,7 @@
                     <div class="col-lg-12" style="text-align:center;">
                         <div class="copyright-text" >
                             <!-- Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0. -->
-Copyright &copy;<script>document.write(new Date().getFullYear());</script> All rights reserved | This template is made with <i class="fa fa-heart-o" aria-hidden="true"></i> by <a href="https://colorlib.com" target="_blank">Colorlib</a>
+Copyright &copy;<script>document.write(new Date().getFullYear());</script> All rights reserved | This website is made with <i class="fa fa-heart-o" aria-hidden="true"></i> by <a href="https://colorlib.com" target="_blank">OSSEC</a>
 <!-- Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0. -->
                         </div>
                        
@@ -380,10 +381,10 @@ Copyright &copy;<script>document.write(new Date().getFullYear());</script> All r
 
     });
     // filtre By Category 
-    function selectCategory(id) {
-            window.location.href = "shop.php?idcateg="+id;
+    function selectCategory(id,idc) {
+            window.location.href = "shop.php?idcateg="+idc+"&idsouscateg="+id;
             if(id=="all")
-                window.location.href = "shop.php";
+                window.location.href = "shop.php?idcateg="+idc;
     }
 
     
